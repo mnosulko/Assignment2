@@ -1,0 +1,32 @@
+# PostgreSQL Performance Analysis
+
+## Slow Queries
+
+Using `pg_stat_statements`, the most expensive queries were identified. The highest load was caused by `UPDATE customers` queries, which were executed thousands of times.
+
+## Lock Analysis
+
+Using `pg_stat_activity`, active locks and transactions in the `idle in transaction` state were detected. These transactions can delay the execution of other queries.
+
+## Wide Table Analysis
+
+The `customer_events_wide` table is an example of a wide table. Such tables require more storage and may reduce performance when processing large amounts of data.
+
+## Index Analysis
+
+Existing indexes were analyzed using `EXPLAIN ANALYZE`.
+
+Queries filtering by `customer_id` used indexes (`Index Scan` and `Bitmap Index Scan`), resulting in fast execution times.
+
+A query filtering by `country` initially used a `Seq Scan`, meaning PostgreSQL had to scan the entire table. After creating the following index:
+
+```sql
+CREATE INDEX idx_customers_country
+ON customers(country);
+```
+
+the query started using a `Bitmap Index Scan`, improving performance.
+
+## Conclusion
+
+The database performance was analyzed using PostgreSQL monitoring tools and execution plans. Slow queries, transaction locks, and a missing index on the `country` column were identified. After creating the additional index, query performance improved. The results show the importance of proper indexing and transaction management for maintaining good database performance.
