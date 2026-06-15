@@ -41,6 +41,10 @@ After stopping the workload and completing active transactions:
 - no blocked transactions remained;
 - pg_blocking_pids() returned 0 rows.
 
+Two screenshots are attached for comparison:
+- Before: lock contention and blocked transactions were detected.
+- After: no blocked transactions were found and the query returned 0 rows.
+
 This confirms that lock contention was successfully identified and resolved.
 
 ## Conclusion
